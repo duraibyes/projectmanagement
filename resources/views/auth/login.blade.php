@@ -6,7 +6,7 @@
             <div class="form-group text-center mb-2 bg-form-head p-3">
                 <h3 class="text-white"> Login Form </h3>
             </div>
-            <form method="POST" class="login-form p-5" action="{{ route('login') }}">
+            <form method="POST" class="login-form p-5" action="{{ route('login') }}" autocomplete="off">
                 @csrf
 
                 <div class="form-group my-3">
@@ -35,16 +35,15 @@
                         @enderror
                     </div>
                 </div>
-                <div class="form-group my-3 text-end">
+                {{-- <div class="form-group my-3 text-end">
                     @if (Route::has('password.request'))
                         <a class="text-decoration-none fw-bold" href="{{ route('password.request') }}">
                             {{ __('Forgot Your Password?') }}
                         </a>
                     @endif
-                    {{-- <a href="#" class="text-decoration-none fw-bold">Forget Password ?</a> --}}
-                </div>
-                <div class="form-group my-3 text-center">
-                    <button type="submit" class="btn btn-login w-100 text-white">
+                </div> --}}
+                <div class="form-group my-5 text-center">
+                    <button type="submit" class="btn btn-login w-100 text-white h-50px">
                         {{ __('Login') }}
                     </button>
 

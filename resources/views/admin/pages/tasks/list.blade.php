@@ -4,25 +4,24 @@
         <div class="card">
             <div class="card-header p-3 d-flex justify-content-between">
                 <h5>
-                    PROJECTS
+                    Tasks
                 </h5>
-                <button class="btn primary-btn" onclick="return addProjectModel()"> Add Projects</button>
+                <button class="btn primary-btn" onclick="return addTaskModel('', {{$project_id ?? ''}})"> Add Task</button>
             </div>
             <div class="card-body table-responsive">
                 <table id="project-table" class="table table-hover table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Date</th>
+                            <th>Created Date</th>
+                            <th>Task</th>
+                            <th>Project</th>
                             <th>Collabarators</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
-
                 </table>
             </div>
         </div>
@@ -30,31 +29,44 @@
 @endsection
 @section('add_on_script')
     <script>
+        var from = '{{ $from ?? ''}}';
+        var project_id = '{{ $project_id ?? ''}}';
+        if( from == 'project' ){
+            var url = "{{route('project.task', ['project_id' => $project_id])}}"
+        } else {
+
+            var url = "{{ route('task')}}";
+        }
+        console.log('form', from);
         var dtTable = $('#project-table').DataTable({
 
             processing: true,
             serverSide: true,
             type: 'POST',
             ajax: {
-                "url": "{{ route('project') }}",
+                "url": url,
                 "data": function(d) {
                     d.status = $('select[name=filter_status]').val();
                 }
             },
 
-            columns: [{
-                    data: 'name',
-                    name: 'name'
-                },
+            columns: [
                 {
                     data: 'created_at',
                     name: 'created_at'
                 },
                 {
-                    data: 'collabarator',
-                    name: 'collabarator'
+                    data: 'name',
+                    name: 'name'
+                },                
+                {
+                    data: 'project',
+                    name: 'project'
                 },
                 {
+                    data: 'collabarator',
+                    name: 'collabarator'
+                }, {
                     data: 'status',
                     name: 'status'
                 },
@@ -75,7 +87,7 @@
             "pageLength": 25
         });
 
-        function addProjectModel(id = '') {
+        function addTaskModel(id = '',  project_id = '') {
 
             $.ajaxSetup({
                 headers: {
@@ -83,10 +95,11 @@
                 }
             });
             $.ajax({
-                url: "{{ route('project.add_edit') }}",
+                url: "{{ route('task.add_edit') }}",
                 type: 'POST',
                 data: {
-                    id: id
+                    id: id,
+                    project_id:project_id
                 },
                 success: function(res) {
 
@@ -101,59 +114,43 @@
             });
         }
 
-        function changeStatus(id, status) {
-
-            Swal.fire({
-                text: "Are you sure you would like to change status?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, Change it!",
-                cancelButtonText: "No, return",
-                customClass: {
-                    confirmButton: "btn btn-danger",
-                    cancelButton: "btn btn-active-light"
+        function changeStatus(status, id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            }).then(function(result) {
-                if (result.value) {
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
+            });
 
-                    $.ajax({
-                        url: "{{ route('project.status') }}",
-                        type: 'POST',
-                        data: {
-                            id: id,
-                            status: status
+            $.ajax({
+                url: "{{ route('task.status') }}",
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                success: function(res) {
+                    Swal.fire({
+                        title: "Updated!",
+                        text: res.message,
+                        icon: "success",
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn btn-success"
                         },
-                        success: function(res) {
-                            Swal.fire({
-                                title: "Updated!",
-                                text: res.message,
-                                icon: "success",
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-success"
-                                },
-                                timer: 3000
-                            });
-                            dtTable.draw();
-                        },
-                        error: function(xhr, err) {
-                            if (xhr.status == 403) {
-                                toastr.error(xhr.statusText, 'UnAuthorized Access');
-                            }
-                        }
+                        timer: 3000
                     });
+                    dtTable.draw();
+                },
+                error: function(xhr, err) {
+                    if (xhr.status == 403) {
+                        toastr.error(xhr.statusText, 'UnAuthorized Access');
+                    }
                 }
             });
 
         }
 
-        function deleteProject(id) {
+        function deleteTask(id) {
 
             Swal.fire({
                 text: "You won't be able to revert this!",
@@ -175,7 +172,7 @@
                     });
 
                     $.ajax({
-                        url: "{{ route('project.delete') }}",
+                        url: "{{ route('task.delete') }}",
                         type: 'POST',
                         data: {
                             id: id,

@@ -31,6 +31,7 @@
         <li class="nav-item">
             <a href="#" class="nav-link p-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 <i class="bi bi-bell"></i>
+                <span class="noti-count" id="noti_count"></span>
             </a>
         </li>
     </ul>

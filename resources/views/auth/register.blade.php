@@ -59,7 +59,7 @@
                     </div>
 
                     <div class="form-group my-5 text-center">
-                        <button class="btn btn-login w-100 text-white"> Sign Up</button>
+                        <button class="btn btn-login w-100 text-white h-50px"> Sign Up</button>
                     </div>
                     @if (Route::has('login'))
                         <div class="form-group text-center">

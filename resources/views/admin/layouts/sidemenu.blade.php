@@ -10,11 +10,19 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <li class="nav-item active">
-                    <a href="pages/widgets.html" class="nav-link d-flex align-items-center">
+                <li class="nav-item @if( request()->routeIs(['project'])) active @endif">
+                    <a href="{{ route('project')}}" class="nav-link d-flex align-items-center">
                         <i class="bi bi-app-indicator"></i>
                         <label>
                             Projects
+                        </label>
+                    </a>
+                </li>
+                <li class="nav-item @if( request()->routeIs(['task'])) active @endif">
+                    <a href="{{ route('task' ) }}" class="nav-link d-flex align-items-center">
+                        <i class="bi bi-list-check"></i>
+                        <label>
+                            Task
                         </label>
                     </a>
                 </li>

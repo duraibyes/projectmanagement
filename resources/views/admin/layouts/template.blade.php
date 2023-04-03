@@ -46,27 +46,7 @@
 
         hamburger.addEventListener('click', openOrCloseMenu)
         sidemenuClose.addEventListener('click', openOrCloseMenu)
-
-
-        function changeStatus() {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                    )
-                }
-            })
-        }
+      
     </script>
     <!-- Modal -->
     <div class="modal modal-right fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -74,19 +54,55 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Task Notification</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                <div class="modal-body" >
+                    <div class="row notifications" id="notification_content">                       
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal" id="commonModal" tabindex="-1" aria-labelledby="commonExampleModalLabel" aria-hidden="true">
+    </div>
+    <script src="//js.pusher.com/3.1/pusher.min.js"></script>
+    <script type="text/javascript">
+        var notificationsWrapper   = $('#notification_content');
+        var notifications          = notificationsWrapper
+  
+  
+        var pusher = new Pusher("615a420aafd39e15eddc", {
+          encrypted: true,
+          cluster: 'ap2'
+        });
+  
+        // Subscribe to the channel we specified in our Laravel Event
+        var channel = pusher.subscribe('task-status');
+  
+        // Bind a function to a Event (the full Laravel class)
+        var notificationsCount = 0;
+        channel.bind('App\\Events\\MessageSent', function(data) {
+          var existingNotifications = notifications.html();
+          var newNotificationHtml = `<div class="col-sm-12">
+                            <div class="noti">
+                                <label for="">
+                                    ${data.message}
+                                </label>
+                            </div>
+                        </div>
+          `;
+          notifications.html(newNotificationHtml + existingNotifications);
+  
+          notificationsCount += 1;
+          $('#noti_count').show();
+          $('#noti_count').html(notificationsCount);
+     
+        });
+
+      </script>
 </body>
 
 </html>
